@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import User from "./user.model.js"
 
 const subscriptionSchema = new mongoose.Schema({
     name: {
@@ -25,8 +26,8 @@ const subscriptionSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ["sports", "technology","finance", "entertaiment", "lifestyle", "politics","other"],
-        requied: [true, "Category must be selected...."]
+        enum: ["sports", "technology","finance", "entertainment", "lifestyle", "politics","other"],
+        required: [true, "Category must be selected...."]
     },
     paymentMethod: {
         type: String,
@@ -34,12 +35,13 @@ const subscriptionSchema = new mongoose.Schema({
         trim: true,
     },
     status: {
+        type: String,
         enum: ["active", "cancelled", "expired"],
         default: "active"
     },
     startDate: {
         type: Date,
-        requieed: [true, "Start date must be specified..."],
+        required: [true, "Start date must be specified..."],
         validate: {
             validator: (value) => value <= new Date(),
             message: "Start date must be in the past.." 
@@ -71,7 +73,7 @@ subscriptionSchema.pre("save", function(next) {
             yearly: 365
         };
         this.renewalDate = new Date(this.startDate);
-        this.renewalDate = setDate(this.renewalDate.getDate() + periods[this.frequency]);
+        this.renewalDate.setDate(this.renewalDate.getDate() + periods[this.frequency]);
     }
 
     if(this.renewalDate < new Date()){
